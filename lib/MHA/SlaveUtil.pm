@@ -228,25 +228,6 @@ sub release_monitor_advisory_lock($) {
 }
 
 sub check_if_super_read_only {
-  my $host = shift;
-  my $ip = shift;
-  my $port = shift;
-  my $user = shift;
-  my $pass = shift;
-  # create databasehandle to check super_read_only setting
-  my $dsn_host = $ip =~ m{:} ? '[' . $ip . ']' : $ip;
-  my $dsn = "DBI:mysql:;host=$dsn_host;port=$port";
-  my $dbh =
-    DBI->connect( $dsn, $user, MHA::NodeUtil::unescape_for_shell($pass),
-    { PrintError => 0, RaiseError => 1 } );
-  croak "Failed to get DB Handle to check super_read_only on $host:$port!\n" unless ($dbh);
-
-  my $sth = $dbh->prepare("SELECT \@\@global.super_read_only as Value");
-  $sth->execute();
-  my $href = $sth->fetchrow_hashref;
-  if ( $href->{Value} == '1' ) {
-    return (1, $dbh);
-  }
   return (0, 0);
 }
 
